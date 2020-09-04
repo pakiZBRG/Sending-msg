@@ -1,43 +1,35 @@
 <?php
-    $result = "";
-    // Allow DisplayUnlockCaptcha
-    // Allow LessSecureApps
-    use PHPMailer\PHPMailer\PHPMailer;
-    use PHPMailer\PHPMailer\SMTP;
-    use PHPMailer\PHPMailer\Exception;
-
     require 'vendor/autoload.php';
-    
+
+    class SendEmail{
+        //Does not need instanciance
+        public static function SendMail($to, $subject, $content){
+            $key = "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";
+
+            $email = new \SendGrid\Mail\Mail();
+            $email->setFrom("nasa.nase72@gmail.com", "Paki");
+            $email->setSubject($subject);
+            $email->addTo($to);
+            $email->addContent("text/plain", $content);
+
+            $sendGrid = new \SendGrid($key);
+
+            try{
+                $response = $sendGrid->send($email);
+                return $response;
+            }
+            catch(Exception $e){
+                echo "Error: ".$e->getMessage();
+                return false;
+            }
+        }
+    }
+
     if(isset($_POST['submit'])){
-        $mail = new PHPMailer(true);
-        try{
-          $mail->isSMTP();
-          // $mail->SMTPDebug = 4;
-          $mail->Host = 'smtp.gmail.com';
-          $mail->Port = 587;
-          $mail->SMTPAuth = true;
-          $mail->SMTPSecure = 'tls';
-          $mail->Username = 'nasa.nase72@gmail.com';
-          $mail->Password = 'Jasamnikola1';
-  
-          $mail->setFrom($_POST['email'], 'Paki');
-          $mail->addAddress('nasa.nase72@gmail.com');
-          $mail->addReplyTo('no-reply@gmail.com', 'No reply');
-  
-          $mail->isHTML(true);
-          $mail->Subject = 'You got mail';
-          $mail->Body = '<p>Name: <h3>'.$_POST['name'].'</h3>Email: <h3>'.$_POST['email'].'</h3>Message: <h3>'.$_POST['message'].'</h3></p>';
-  
-          $mail->send();
-          echo 'Message sent';
-        }
-        catch(Exception $e){
-          $result = $mail->ErrorInfo;
-          echo "$result";
-        }
-        exit();
+      SendEmail::SendMail($_POST['email'], $_POST['subject'], $_POST['message']);
     }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -58,9 +50,6 @@
           </div>
           <div class="card-body px-4">
             <form action="#" method="POST">
-              <div class="form-group">
-                <?php echo $result; ?>
-              </div>
               <div class="form-group">
                 <label for="name">Name</label>
                 <input type="text" name="name" id="name" class="form-control" placeholder="Enter Name" required>
