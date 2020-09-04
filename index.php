@@ -7,9 +7,9 @@
             $key = "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";
 
             $email = new \SendGrid\Mail\Mail();
-            $email->setFrom("nasa.nase72@gmail.com", "Paki");
+            $email->setFrom($to, "Paki");
             $email->setSubject($subject);
-            $email->addTo($to);
+            $email->addTo("nasa.nase72@gmail.com");
             $email->addContent("text/plain", $content);
 
             $sendGrid = new \SendGrid($key);
